@@ -87,4 +87,9 @@ public class PetManager : MonoBehaviour
     {
         m_CurrentPetHungerScript?.Feed();
     }
+
+    public Pet GetActivePet()
+    {
+        return m_Pets[m_ActivePet];
+    }
 }

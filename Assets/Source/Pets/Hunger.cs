@@ -60,7 +60,7 @@ public class Hunger : MonoBehaviour
         m_CanGetHungrier = false;
         yield return new WaitForSeconds(m_Pet.m_HungerTimerInSeconds);
 
-        m_CurrentHunger -= m_Pet.m_HungerAddedWhenHungry;
+        m_CurrentHunger -= m_Pet.HungerRemovedWhenHungry;
         m_UIViewManager.m_HungerView.UpdatePetNeedsFillBar(m_CurrentHunger, m_Pet.MaxPetStat, "Hunger");
 
         // If our pet is as hungry as they can get, set their food points to 0 and tell the game to stop allowing the pet to get hungrier

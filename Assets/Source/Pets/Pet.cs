@@ -53,7 +53,7 @@ public class Pet : MonoBehaviour
     [Tooltip("How many seconds does it take before the pet gets hungrier?")]
     public int m_HungerTimerInSeconds = 5;
 
-    [Range(0, 10)]
+    [Range(1, 10)]
     [Tooltip("How many seconds does it take before the feed pet button can be pressed again?")]
     public int m_TimeBetweenFeeds = 8;
 
@@ -75,10 +75,12 @@ public class Pet : MonoBehaviour
     [Tooltip("How many seconds does it take before the pet gets sadder?")]
     public int m_HappinessDecayInSeconds = 5;
 
-    [Range(0, 10)]
+    [Range(1, 10)]
     [Tooltip("How many seconds does it take before the pet - pet button can be pressed again?")]
     public int m_TimeBetweenCuddles = 8;
 
+    //This is called a Property
+    //Properties are getter and setter functions. You can either have a property control another variable or be like MaxPetStat below and be its own variable
     public int HungerRemovedWhenHungry { get { return m_HungerAddedWhenHungry; } }
 
     public int MaxPetStat { get; private set; }
@@ -89,6 +91,7 @@ public class Pet : MonoBehaviour
 
     public void Initilize()
     {
+        MaxPetStat = k_MaxPetNeedStat;
         m_PetAnimator = GetComponent<Animator>();
 
         m_IsInitilized = true; 
@@ -100,8 +103,8 @@ public class Pet : MonoBehaviour
         {
             Initilize(); 
         }
-       
     }
+
     public void SetAnimatorTrigger(AnimatorEnums state)
     {
         if (m_PetAnimator)
