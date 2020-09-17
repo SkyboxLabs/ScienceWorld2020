@@ -6,9 +6,9 @@ using UnityEngine.PlayerLoop;
 public class PetManager : MonoBehaviour
 {
     [SerializeField]
-    private UIViewManager m_UIManager;
+    private UIViewManager m_UIViewManager;
     [SerializeField]
-    private List<Pet> ListOfPets = new List<Pet>(); //This is a list! We can store multiples of information
+    private List<Pet> m_Pets = new List<Pet>(); //This is a list! We can store multiples of information
 
     private int m_ActivePet = 0;
     private Happiness m_CurrentPetHappinessScript;
@@ -16,23 +16,24 @@ public class PetManager : MonoBehaviour
 
     private void Awake()
     {
-        if (ListOfPets.Count == 0)
+        if (m_Pets.Count == 0)
         {
-            Debug.LogWarning("Currently your PetManager has no pets! Make sure to add a pet to the List of Pets");
+            Debug.LogError("Currently your PetManager has no pets! Make sure to add a pet to m_Pets by clicking on the Pet Canvas in the Heirarchy(left side)," +
+                " and adding to Pets on Pet Manager in the Inspector (right side)");
         }
 
-        foreach (Pet PetElement in ListOfPets)
+        foreach (Pet PetElement in m_Pets)
         {
             if (PetElement == null)
             {
-                Debug.LogWarning("Element in List of Pets is null - be sure to assign it a value!");
+                Debug.LogWarning("Element in Pets is null - be sure to assign it a value!");
                 break; 
             }
         }
 
-        if (!m_UIManager)
+        if (!m_UIViewManager)
         {
-            Debug.LogWarning("Currently your PetManager has no UI Manager - be sure to assign it one so it works!");
+            Debug.LogWarning("Currently your PetManager has no UI View Manager - be sure to assign it one so it works!");
         }
     }
 
@@ -41,19 +42,19 @@ public class PetManager : MonoBehaviour
         SwapPet(m_ActivePet);
     }
 
-    public void SwapPet(int x) //This is a function we can call on our buttons to swap the pets. The number represents what element in the list it is.
+    public void SwapPet(int newActivePet) //This is a function we can call on our buttons to swap the pets. The number represents what element in the list it is.
     {
-        foreach (Pet elementInList in ListOfPets)
+        foreach (Pet pet in m_Pets)
         {
-            elementInList.gameObject.SetActive(false);
+            pet.gameObject.SetActive(false);
         }
 
-        m_ActivePet = x;
-        
-        ListOfPets[m_ActivePet].gameObject.SetActive(true);
+        m_ActivePet = newActivePet;
 
-        m_CurrentPetHappinessScript = ListOfPets[m_ActivePet].GetComponent<Happiness>();
-        m_CurrentPetHungerScript = ListOfPets[m_ActivePet].GetComponent<Hunger>();
+        m_Pets[m_ActivePet].gameObject.SetActive(true);
+
+        m_CurrentPetHappinessScript = m_Pets[m_ActivePet].GetComponent<Happiness>();
+        m_CurrentPetHungerScript = m_Pets[m_ActivePet].GetComponent<Hunger>();
 
         UpdateListeners();
         UpdateUI();
@@ -61,17 +62,17 @@ public class PetManager : MonoBehaviour
 
     private void UpdateListeners()
     {
-        m_UIManager.m_FeedPetButton.onClick.RemoveAllListeners();
-        m_UIManager.m_CuddlePetButton.onClick.RemoveAllListeners();
-        
-        m_UIManager.m_FeedPetButton.onClick.AddListener(FeedButtonOnClick);
-        m_UIManager.m_CuddlePetButton.onClick.AddListener(CuddleButtonOnClick);
+        m_UIViewManager.m_FeedPetButton.onClick.RemoveAllListeners();
+        m_UIViewManager.m_CuddlePetButton.onClick.RemoveAllListeners();
+
+        m_UIViewManager.m_FeedPetButton.onClick.AddListener(FeedButtonOnClick);
+        m_UIViewManager.m_CuddlePetButton.onClick.AddListener(CuddleButtonOnClick);
     }
 
     private void UpdateUI()
     {
-        m_UIManager.ToggleHungerObjects(m_CurrentPetHungerScript);
-        m_UIManager.ToggleHappinessObjects(m_CurrentPetHappinessScript);
+        m_UIViewManager.ToggleHungerObjects(m_CurrentPetHungerScript);
+        m_UIViewManager.ToggleHappinessObjects(m_CurrentPetHappinessScript);
 
         m_CurrentPetHungerScript?.UpdatePetHunger();
         m_CurrentPetHappinessScript?.UpdatePetHappiness();
