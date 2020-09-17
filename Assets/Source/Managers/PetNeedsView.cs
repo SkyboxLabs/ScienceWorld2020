@@ -11,9 +11,7 @@ public class PetNeedsView : MonoBehaviour
     public void UpdatePetNeedsFillBar(double NewHungerValue, double MaxHungerValue, string Origin)
     {
         float fillAmount = (float)(NewHungerValue / MaxHungerValue);
-        print(Origin + " " + fillAmount.ToString());
         m_PetNeedFillBar.fillAmount = fillAmount;
         m_PetNeedIcon.color = new Color(1, 1, 1, fillAmount);
     }
-
 }
