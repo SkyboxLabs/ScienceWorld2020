@@ -11,8 +11,11 @@ public class PetManager : MonoBehaviour
     private List<Pet> m_Pets = new List<Pet>(); //This is a list! We can store multiples of information
     private int m_ActivePet = 0;
 
-    public Happiness CurrentPetHappinessScript { get; private set; } 
-    public Hunger CurrentPetHungerScript { get; private set;  }
+    public Happiness CurrentPetHappinessScript { get; private set; }
+    public Hunger CurrentPetHungerScript { get; private set; }
+
+    private bool m_PetShouldLookSad = false;
+    private bool m_PetIsSad = false;
 
     private void Awake()
     {
@@ -27,7 +30,7 @@ public class PetManager : MonoBehaviour
             if (PetElement == null)
             {
                 Debug.LogWarning("Element in Pets is null - be sure to assign it a value!");
-                break; 
+                break;
             }
         }
 
@@ -40,6 +43,11 @@ public class PetManager : MonoBehaviour
     private void Start()
     {
         SwapPet(m_ActivePet);
+    }
+
+    private void Update()
+    {
+        UpdateAnimatorState();
     }
 
     public void SwapPet(int newActivePet) //This is a function we can call on our buttons to swap the pets. The number represents what element in the list it is.
@@ -81,5 +89,27 @@ public class PetManager : MonoBehaviour
     public Pet GetActivePet()
     {
         return m_Pets[m_ActivePet];
+    }
+
+    private void UpdateAnimatorState()
+    {
+        if (CurrentPetHappinessScript.IsLowHappiness && CurrentPetHungerScript.IsLowHunger)
+        {
+            m_PetShouldLookSad = true;
+        }
+        else if (CurrentPetHappinessScript.IsLowHappiness || CurrentPetHungerScript.IsLowHunger)
+        {
+            m_PetShouldLookSad = true;
+        }
+        else
+        {
+            m_PetShouldLookSad = false;
+        }
+
+        if (m_PetIsSad != m_PetShouldLookSad)
+        {
+            m_PetIsSad = m_PetShouldLookSad;
+            GetActivePet().SetAnimatorBool(AnimatorBools.IsSad, m_PetIsSad);
+        }
     }
 }

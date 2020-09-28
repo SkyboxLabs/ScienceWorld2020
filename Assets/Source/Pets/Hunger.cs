@@ -18,6 +18,8 @@ public class Hunger : MonoBehaviour
     public bool CanBeFed { get; private set; }
     public double CurrentHunger { get; private set; }
 
+    public bool IsLowHunger { get; private set; } 
+
     private Pet m_Pet;
 
     private void Awake() //Unity calls this when the script is turned on for the first time
@@ -48,7 +50,7 @@ public class Hunger : MonoBehaviour
     private void Update() // Unity will call this every frame
     {
         // If the pet can get hungrier and the time in the game is the next interval of which the pet gets hungrier, make the pet get hungrier
-        if (m_CanGetHungrier)
+        if (m_CanGetHungrier && !IsLowHunger)
         {
             StartCoroutine(GetHungrier());
         }
@@ -65,16 +67,15 @@ public class Hunger : MonoBehaviour
         if (CurrentHunger <= 0)
         {
             CurrentHunger = 0;
+            IsLowHunger = true;
         }
-        else
-        {
-            m_CanGetHungrier = true;
-        }
+
+        m_CanGetHungrier = true;
     }
 
     public void Feed()
     {
-        m_Pet.SetAnimatorTrigger(AnimatorEnums.Happy);
+        m_Pet.SetAnimatorTrigger(AnimatorTriggers.Fed);
         StartCoroutine(GiveFood());
     }
 
@@ -82,6 +83,7 @@ public class Hunger : MonoBehaviour
     {
         // You want to turn off the button during this time so users cannot set off too many functions of what are called coroutines (functions that can come back) 
         CanBeFed = false;
+        IsLowHunger = false; 
         CurrentHunger += m_Pet.m_HungerRemovedWhenFed;
 
         // If our pet is as full as they can get, set their food points to 0 and tell the game to stop allowing the pet to get hungrier

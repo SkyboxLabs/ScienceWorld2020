@@ -1679,7 +1679,7 @@ PrefabInstance:
     - target: {fileID: 2689362881021097569, guid: 0d7ab217d2b7bce4eb6f0b1c8d22440f,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -49.99994
+      value: -50
       objectReference: {fileID: 0}
     - target: {fileID: 2689362881772358736, guid: 0d7ab217d2b7bce4eb6f0b1c8d22440f,
         type: 3}
@@ -1945,6 +1945,11 @@ PrefabInstance:
       propertyPath: m_UIViewManager
       value: 
       objectReference: {fileID: 893440243}
+    - target: {fileID: 5931860641854670354, guid: ef3595044bfa6aa41bba6cb33a348f3e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5931860641854670356, guid: ef3595044bfa6aa41bba6cb33a348f3e,
         type: 3}
       propertyPath: m_UIViewManager

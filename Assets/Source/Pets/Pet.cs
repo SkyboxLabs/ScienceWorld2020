@@ -12,9 +12,15 @@ public enum PetType
     Cat,
 }
 
-public enum AnimatorEnums
+public enum AnimatorTriggers
 {
-    Happy,
+    Cuddled,
+    Fed,
+}
+
+public enum AnimatorBools
+{
+    IsSad, 
 }
 
 public class Pet : MonoBehaviour
@@ -87,29 +93,37 @@ public class Pet : MonoBehaviour
 
     private Animator m_PetAnimator;
 
-    internal bool m_IsInitilized = false; 
+    internal bool m_IsInitilized = false;
 
     public void Initilize()
     {
         MaxPetStat = k_MaxPetNeedStat;
         m_PetAnimator = GetComponent<Animator>();
 
-        m_IsInitilized = true; 
+        m_IsInitilized = true;
     }
 
     private void Awake()
     {
         if (!m_IsInitilized)
         {
-            Initilize(); 
+            Initilize();
         }
     }
 
-    public void SetAnimatorTrigger(AnimatorEnums state)
+    public void SetAnimatorTrigger(AnimatorTriggers state)
     {
         if (m_PetAnimator)
         {
             m_PetAnimator.SetTrigger(state.ToString());
+        }
+    }
+
+    public void SetAnimatorBool(AnimatorBools state, bool IsActive)
+    {
+        if (m_PetAnimator)
+        {
+            m_PetAnimator.SetBool(state.ToString(), IsActive);
         }
     }
 }

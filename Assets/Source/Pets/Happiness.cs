@@ -18,6 +18,8 @@ public class Happiness : MonoBehaviour
     public bool CanBeSnuggled { get; private set; } //This is a True/False variable that lets us know if the pet can be interacted with.
     public double CurrentHappiness { get; private set; } //This is a number variable that lets us know what the pet's current happiness is at
 
+    public bool IsLowHappiness { get; private set; } 
+
     //These are our private variables. These can only be accessed and modified in this script.
     private bool m_CanGetSadder = true;
     private Pet m_Pet;
@@ -45,12 +47,12 @@ public class Happiness : MonoBehaviour
         CurrentHappiness = m_Pet.m_StartingHappiness; //Initilize our pet's current happiness to be the happiness we determined in Pet (Our numbers for designers)
 
         CanBeSnuggled = true; //Can our pet be snuggled? Yes! This will be used to controll the "snuggle" button. 
-
+        IsLowHappiness = false; 
     }
 
     private void Update() // Unity will call this every frame
     {
-        if (m_CanGetSadder) // If the pet can get sadder run the next code
+        if (m_CanGetSadder && !IsLowHappiness) // If the pet can get sadder run the next code
         {
             StartCoroutine(GetSadder()); // Coroutine is a special type of function - more on this later!
         }
@@ -67,16 +69,15 @@ public class Happiness : MonoBehaviour
         if (CurrentHappiness <= 0)
         {
             CurrentHappiness = 0;
+            IsLowHappiness = true;
         }
-        else
-        {
-            m_CanGetSadder = true;
-        }
+
+        m_CanGetSadder = true;
     }
 
     public void Cuddle()
     {
-        m_Pet.SetAnimatorTrigger(AnimatorEnums.Happy);
+        m_Pet.SetAnimatorTrigger(AnimatorTriggers.Cuddled);
         StartCoroutine(PetIsCuddled());
 
         if (m_Pet.m_PetType == PetType.Dog)
@@ -89,6 +90,7 @@ public class Happiness : MonoBehaviour
     {
         // You want to turn off the button during this time so users cannot set off too many functions of what are called coroutines (functions that can come back) 
         CanBeSnuggled = false;
+        IsLowHappiness = false; 
 
         //This is how you add to a variable in most languages
         //Can also be writen as m_CurrentHappiness = m_CurrentHappiness + m_Pet.HappinessAddedWhenPet
