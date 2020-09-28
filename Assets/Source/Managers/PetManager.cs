@@ -103,12 +103,20 @@ public class PetManager : MonoBehaviour
             {
                 m_PetShouldLookSad = true;
             }
+            else
+            {
+                m_PetShouldLookSad = false;
+            }
         }
         else if (CurrentPetHungerScript && !CurrentPetHappinessScript)
         {
             if (CurrentPetHungerScript.IsLowHunger)
             {
                 m_PetShouldLookSad = true;
+            }
+            else
+            {
+                m_PetShouldLookSad = false;
             }
         }
         else if (!CurrentPetHungerScript && CurrentPetHappinessScript)
@@ -117,10 +125,10 @@ public class PetManager : MonoBehaviour
             {
                 m_PetShouldLookSad = true;
             }
-        }
-        else
-        {
-            m_PetShouldLookSad = false;
+            else
+            {
+                m_PetShouldLookSad = false;
+            }
         }
 
         if (m_PetIsSad != m_PetShouldLookSad)
