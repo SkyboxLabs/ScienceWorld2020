@@ -46,6 +46,7 @@ public class PetDebugUI : MonoBehaviour
         m_IsInitialized = true;
     }
 
+    //Unity calls this when the object is turned on
     public void OnEnable()
     {
         if(!m_IsInitialized)
@@ -53,7 +54,7 @@ public class PetDebugUI : MonoBehaviour
             Initialize();
         }
 
-        //Values
+        //setting up inital values
         m_HungerAddedWhenHungrySlider.SetValue(m_PetManager.GetActivePet().m_HungerAddedWhenHungry);
         m_HungerRemovedWhenFedSlider.SetValue(m_PetManager.GetActivePet().m_HungerRemovedWhenFed);
         m_HungerTimerInSeconds.SetValue(m_PetManager.GetActivePet().m_HungerTimerInSeconds);
@@ -83,36 +84,36 @@ public class PetDebugUI : MonoBehaviour
 
     public void UpdateHungerRemovedWhenFed(float value)
     {
-        UpdateSlider(value, ref m_PetManager.GetActivePet().m_HungerRemovedWhenFed, m_HungerAddedWhenHungrySlider);
+        UpdateSlider(value, ref m_PetManager.GetActivePet().m_HungerRemovedWhenFed, m_HungerRemovedWhenFedSlider);
     }
 
     public void UpdateHungerTimerInSeconds(float value)
     {
-        UpdateSlider(value, ref m_PetManager.GetActivePet().m_HungerTimerInSeconds, m_HungerAddedWhenHungrySlider);
+        UpdateSlider(value, ref m_PetManager.GetActivePet().m_HungerTimerInSeconds, m_HungerTimerInSeconds);
     }
 
     public void UpdateTimeBetweenFeeds(float value)
     {
-        UpdateSlider(value, ref m_PetManager.GetActivePet().m_TimeBetweenFeeds, m_HungerAddedWhenHungrySlider);
+        UpdateSlider(value, ref m_PetManager.GetActivePet().m_TimeBetweenFeeds, m_TimeBetweenFeedsSlider);
     }
 
     public void UpdateHappinessRemovedOverTime(float value)
     {
-        UpdateSlider(value, ref m_PetManager.GetActivePet().m_HappinessRemovedOverTime, m_HungerAddedWhenHungrySlider);
+        UpdateSlider(value, ref m_PetManager.GetActivePet().m_HappinessRemovedOverTime, m_HappinessRemovedOverTimeSlider);
     }
 
     public void UpdateHappinessAddedWhenPet(float value)
     {
-        UpdateSlider(value, ref m_PetManager.GetActivePet().m_HappinessAddedWhenPet, m_HungerAddedWhenHungrySlider);
+        UpdateSlider(value, ref m_PetManager.GetActivePet().m_HappinessAddedWhenPet, m_HappinessAddedWhenPetSlider);
     }
 
     public void UpdateHappinessDecayInSeconds(float value)
     {
-        UpdateSlider(value, ref m_PetManager.GetActivePet().m_HappinessDecayInSeconds, m_HungerAddedWhenHungrySlider);
+        UpdateSlider(value, ref m_PetManager.GetActivePet().m_HappinessDecayInSeconds, m_HappinessDecayInSecondsSlider);
     }
 
     public void UpdateTimeBetweenCuddles(float value)
     {
-        UpdateSlider(value, ref m_PetManager.GetActivePet().m_TimeBetweenCuddles, m_HungerAddedWhenHungrySlider);
+        UpdateSlider(value, ref m_PetManager.GetActivePet().m_TimeBetweenCuddles, m_TimeBetweenCuddlesSlider);
     }
 }
