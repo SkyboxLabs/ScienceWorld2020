@@ -8,9 +8,10 @@ public class PetNeedsView : MonoBehaviour
     public Image m_PetNeedIcon;
     public Image m_PetNeedFillBar;
 
-    public void UpdatePetNeedsFillBar(double NewHungerValue, double MaxHungerValue, string Origin)
+    public void UpdatePetNeedsFillBar(double NewValue)
     {
-        float fillAmount = (float)(NewHungerValue / MaxHungerValue);
+        //matches the max value in the Pet Deubug UI 
+        float fillAmount = (float)(NewValue / 100);
         m_PetNeedFillBar.fillAmount = fillAmount;
         m_PetNeedIcon.color = new Color(1, 1, 1, fillAmount);
     }

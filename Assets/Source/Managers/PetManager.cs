@@ -9,10 +9,10 @@ public class PetManager : MonoBehaviour
     private UIViewManager m_UIViewManager;
     [SerializeField]
     private List<Pet> m_Pets = new List<Pet>(); //This is a list! We can store multiples of information
-
     private int m_ActivePet = 0;
-    private Happiness m_CurrentPetHappinessScript;
-    private Hunger m_CurrentPetHungerScript;
+
+    public Happiness CurrentPetHappinessScript { get; private set; } 
+    public Hunger CurrentPetHungerScript { get; private set;  }
 
     private void Awake()
     {
@@ -53,11 +53,10 @@ public class PetManager : MonoBehaviour
 
         m_Pets[m_ActivePet].gameObject.SetActive(true);
 
-        m_CurrentPetHappinessScript = m_Pets[m_ActivePet].GetComponent<Happiness>();
-        m_CurrentPetHungerScript = m_Pets[m_ActivePet].GetComponent<Hunger>();
+        CurrentPetHappinessScript = m_Pets[m_ActivePet].GetComponent<Happiness>();
+        CurrentPetHungerScript = m_Pets[m_ActivePet].GetComponent<Hunger>();
 
         UpdateListeners();
-        UpdateUI();
     }
 
     private void UpdateListeners()
@@ -69,23 +68,14 @@ public class PetManager : MonoBehaviour
         m_UIViewManager.m_CuddlePetButton.onClick.AddListener(CuddleButtonOnClick);
     }
 
-    private void UpdateUI()
-    {
-        m_UIViewManager.ToggleHungerObjects(m_CurrentPetHungerScript);
-        m_UIViewManager.ToggleHappinessObjects(m_CurrentPetHappinessScript);
-
-        m_CurrentPetHungerScript?.UpdatePetHunger();
-        m_CurrentPetHappinessScript?.UpdatePetHappiness();
-    }
-
     private void CuddleButtonOnClick()
     {
-        m_CurrentPetHappinessScript?.Cuddle();
+        CurrentPetHappinessScript?.Cuddle();
     }
 
     private void FeedButtonOnClick()
     {
-        m_CurrentPetHungerScript?.Feed();
+        CurrentPetHungerScript?.Feed();
     }
 
     public Pet GetActivePet()
