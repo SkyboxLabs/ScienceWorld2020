@@ -93,13 +93,30 @@ public class PetManager : MonoBehaviour
 
     private void UpdateAnimatorState()
     {
-        if (CurrentPetHappinessScript.IsLowHappiness && CurrentPetHungerScript.IsLowHunger)
+        if (CurrentPetHappinessScript && CurrentPetHungerScript)
         {
-            m_PetShouldLookSad = true;
+            if (CurrentPetHappinessScript.IsLowHappiness && CurrentPetHungerScript.IsLowHunger)
+            {
+                m_PetShouldLookSad = true;
+            }
+            else if (CurrentPetHappinessScript.IsLowHappiness || CurrentPetHungerScript.IsLowHunger)
+            {
+                m_PetShouldLookSad = true;
+            }
         }
-        else if (CurrentPetHappinessScript.IsLowHappiness || CurrentPetHungerScript.IsLowHunger)
+        else if (CurrentPetHungerScript && !CurrentPetHappinessScript)
         {
-            m_PetShouldLookSad = true;
+            if (CurrentPetHungerScript.IsLowHunger)
+            {
+                m_PetShouldLookSad = true;
+            }
+        }
+        else if (!CurrentPetHungerScript && CurrentPetHappinessScript)
+        {
+            if (CurrentPetHappinessScript.IsLowHappiness)
+            {
+                m_PetShouldLookSad = true;
+            }
         }
         else
         {
