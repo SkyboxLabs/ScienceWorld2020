@@ -11,14 +11,18 @@ using UnityEngine;
 
 public class Happiness : MonoBehaviour
 {
-    // Our inital variables to start the game. 
-    private bool m_CanGetSadder = true;
-    private bool m_CanBeSnuggled = true;
-    private double m_PatTimer;
-    private double m_CurrentHappiness;
+    //These are our public variables - these can be accessed anywhere else in the project. 
+    public UIViewManager m_UIViewManager; //This is a refrence to the script that will update all of the User Interface related to this system
 
+    //These are public variables with a private Set meaning it allows us to acces the variable anywhere else, but only modify it in this script.
+    public bool CanBeSnuggled { get; private set; } //This is a True/False variable that lets us know if the pet can be interacted with.
+    public double CurrentHappiness { get; private set; } //This is a number variable that lets us know what the pet's current happiness is at
+
+    public bool IsLowHappiness { get; private set; } 
+
+    //These are our private variables. These can only be accessed and modified in this script.
+    private bool m_CanGetSadder = true;
     private Pet m_Pet;
-    public UIViewManager m_UIViewManager;
 
     private void Awake() //Unity calls this when the script is turned on for the first time
     {
@@ -32,7 +36,7 @@ public class Happiness : MonoBehaviour
 
         if (!m_UIViewManager)
         {
-            Debug.LogWarning("Currently your PetManager has no UI View Manager - be sure to assign it one so it works! Look for 'UIViewManager' in the hierarchy(left side");
+            Debug.LogWarning("Currently your Pet has no UI View Manager - be sure to assign it one so it works! Look for 'UIViewManager' in the hierarchy(left side");
         }
 
         if (!m_Pet.m_IsInitilized)
@@ -40,15 +44,15 @@ public class Happiness : MonoBehaviour
             m_Pet.Initilize();
         }
 
-        m_CurrentHappiness = m_Pet.m_StartingHappiness; //Initilize our pet's current happiness to be the happiness we determined in Pet (Our numbers for designers)
+        CurrentHappiness = m_Pet.m_StartingHappiness; //Initilize our pet's current happiness to be the happiness we determined in Pet (Our numbers for designers)
 
-        m_CanBeSnuggled = true; //Can our pet be snuggled? This is useful later in the script!
-
+        CanBeSnuggled = true; //Can our pet be snuggled? Yes! This will be used to controll the "snuggle" button. 
+        IsLowHappiness = false; 
     }
 
     private void Update() // Unity will call this every frame
     {
-        if (m_CanGetSadder) // If the pet can get sadder run the next code
+        if (m_CanGetSadder && !IsLowHappiness) // If the pet can get sadder run the next code
         {
             StartCoroutine(GetSadder()); // Coroutine is a special type of function - more on this later!
         }
@@ -59,23 +63,21 @@ public class Happiness : MonoBehaviour
         m_CanGetSadder = false;
         yield return new WaitForSeconds(m_Pet.m_HappinessDecayInSeconds);
 
-        m_CurrentHappiness -= m_Pet.m_HappinessRemovedOverTime;
-        m_UIViewManager.m_HappinessView.UpdatePetNeedsFillBar(m_CurrentHappiness, m_Pet.MaxPetStat, "Happiness");
+        CurrentHappiness -= m_Pet.m_HappinessRemovedOverTime;
 
         // If our pet is as sad as they can get, set their food points to 0 and tell the game to stop allowing the pet to get sadder :(
-        if (m_CurrentHappiness <= 0)
+        if (CurrentHappiness <= 0)
         {
-            m_CurrentHappiness = 0;
+            CurrentHappiness = 0;
+            IsLowHappiness = true;
         }
-        else
-        {
-            m_CanGetSadder = true;
-        }
+
+        m_CanGetSadder = true;
     }
 
     public void Cuddle()
     {
-        m_Pet.SetAnimatorTrigger(AnimatorEnums.Happy);
+        m_Pet.SetAnimatorTrigger(AnimatorTriggers.Cuddled);
         StartCoroutine(PetIsCuddled());
 
         if (m_Pet.m_PetType == PetType.Dog)
@@ -87,27 +89,39 @@ public class Happiness : MonoBehaviour
     private IEnumerator PetIsCuddled()
     {
         // You want to turn off the button during this time so users cannot set off too many functions of what are called coroutines (functions that can come back) 
-        m_UIViewManager.m_CuddlePetButton.interactable = false;
+        CanBeSnuggled = false;
+        IsLowHappiness = false; 
 
         //This is how you add to a variable in most languages
         //Can also be writen as m_CurrentHappiness = m_CurrentHappiness + m_Pet.HappinessAddedWhenPet
-        m_CurrentHappiness += m_Pet.m_HappinessAddedWhenPet;
-        UpdatePetHappiness(); 
+        CurrentHappiness += m_Pet.m_HappinessAddedWhenPet;
 
         // If our pet is as full as they can get, set their food points to 0 and tell the game to stop allowing the pet to get happer :) 
-        if (m_CurrentHappiness > m_Pet.MaxPetStat)
+        if (CurrentHappiness > m_Pet.MaxPetStat)
         {
-            m_CurrentHappiness = m_Pet.MaxPetStat;
+            CurrentHappiness = m_Pet.MaxPetStat;
         }
 
         // This tells the function to wait how ever long m_Pet.TimeBetweenCuddles is before coming back and finishing the rest of the code
         yield return new WaitForSeconds(m_Pet.m_TimeBetweenCuddles);
 
-        m_UIViewManager.m_CuddlePetButton.interactable = true;
+        CanBeSnuggled = true;
     }
 
-    public void UpdatePetHappiness()
+    private void OnDisable()
     {
-        m_UIViewManager.m_HappinessView.UpdatePetNeedsFillBar(m_CurrentHappiness, m_Pet.MaxPetStat, "Happiness");
+        // There is a bug with the game - the coroutines disalbe when the pet is turned off, and when we swap between pets, we turn them off, thus not getting to the last part
+        // of the coroutine code. This ensures that the game will still work, however, if the player toggles between pets quickly, our game tuning will no longer act as expected. 
+
+        CanBeSnuggled = true;
+
+        if (CurrentHappiness <= 0)
+        {
+            CurrentHappiness = 0;
+        }
+        else
+        {
+            m_CanGetSadder = true;
+        }
     }
 }

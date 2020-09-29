@@ -15,9 +15,10 @@ public class Hunger : MonoBehaviour
 
     // Our inital variables to start the game. 
     private bool m_CanGetHungrier = true;
-    private bool m_CanBeFed = true;
-    private double m_HungerTimer;
-    private double m_CurrentHunger;
+    public bool CanBeFed { get; private set; }
+    public double CurrentHunger { get; private set; }
+
+    public bool IsLowHunger { get; private set; } 
 
     private Pet m_Pet;
 
@@ -42,14 +43,14 @@ public class Hunger : MonoBehaviour
             m_Pet.Initilize();
         }
 
-        m_CurrentHunger = m_Pet.m_StartingHunger;
-        m_CanBeFed = true;
+        CurrentHunger = m_Pet.m_StartingHunger;
+        CanBeFed = true;
     }
 
     private void Update() // Unity will call this every frame
     {
         // If the pet can get hungrier and the time in the game is the next interval of which the pet gets hungrier, make the pet get hungrier
-        if (m_CanGetHungrier)
+        if (m_CanGetHungrier && !IsLowHunger)
         {
             StartCoroutine(GetHungrier());
         }
@@ -60,48 +61,57 @@ public class Hunger : MonoBehaviour
         m_CanGetHungrier = false;
         yield return new WaitForSeconds(m_Pet.m_HungerTimerInSeconds);
 
-        m_CurrentHunger -= m_Pet.HungerRemovedWhenHungry;
-        m_UIViewManager.m_HungerView.UpdatePetNeedsFillBar(m_CurrentHunger, m_Pet.MaxPetStat, "Hunger");
+        CurrentHunger -= m_Pet.HungerRemovedWhenHungry;
 
         // If our pet is as hungry as they can get, set their food points to 0 and tell the game to stop allowing the pet to get hungrier
-        if (m_CurrentHunger <= 0)
+        if (CurrentHunger <= 0)
         {
-            m_CurrentHunger = 0;
+            CurrentHunger = 0;
+            IsLowHunger = true;
         }
-        else
-        { 
-            m_CanGetHungrier = true;
-        }
+
+        m_CanGetHungrier = true;
     }
 
     public void Feed()
     {
-        m_Pet.SetAnimatorTrigger(AnimatorEnums.Happy);
+        m_Pet.SetAnimatorTrigger(AnimatorTriggers.Fed);
         StartCoroutine(GiveFood());
     }
 
     private IEnumerator GiveFood()
     {
         // You want to turn off the button during this time so users cannot set off too many functions of what are called coroutines (functions that can come back) 
-        m_UIViewManager.m_FeedPetButton.interactable = false;
-        m_CurrentHunger += m_Pet.m_HungerRemovedWhenFed;
+        CanBeFed = false;
+        IsLowHunger = false; 
+        CurrentHunger += m_Pet.m_HungerRemovedWhenFed;
 
         // If our pet is as full as they can get, set their food points to 0 and tell the game to stop allowing the pet to get hungrier
-        if (m_CurrentHunger > m_Pet.MaxPetStat)
+        if (CurrentHunger > m_Pet.MaxPetStat)
         {
-            m_CurrentHunger = m_Pet.MaxPetStat;
+            CurrentHunger = m_Pet.MaxPetStat;
         }
-
-        UpdatePetHunger();
 
         // This tells the function to wait how ever long m_Pet.TimeBetweenCuddles is before coming back and finishing the rest of the code
         yield return new WaitForSeconds(m_Pet.m_TimeBetweenFeeds);
-        
-        m_UIViewManager.m_FeedPetButton.interactable = true;
+
+        CanBeFed = true;
     }
 
-    public void UpdatePetHunger()
+    private void OnDisable()
     {
-        m_UIViewManager.m_HungerView.UpdatePetNeedsFillBar(m_CurrentHunger, m_Pet.MaxPetStat, "Hunger");
+        // There is a bug with the game - the coroutines disalbe when the pet is turned off, and when we swap between pets, we turn them off, thus not getting to the last part
+        // of the coroutine code. This ensures that the game will still work, however, if the player toggles between pets quickly, our game tuning will no longer act as expected. 
+
+        CanBeFed = true;
+
+        if (CurrentHunger <= 0)
+        {
+            CurrentHunger = 0;
+        }
+        else
+        {
+            m_CanGetHungrier = true;
+        }
     }
 }
