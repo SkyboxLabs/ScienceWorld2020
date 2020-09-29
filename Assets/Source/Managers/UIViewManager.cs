@@ -36,7 +36,7 @@ public class UIViewManager : MonoBehaviour
             InitilizePetHungerUI();
         }
 
-        if (m_CurrentPetHasHunger)
+        if (m_CurrentPetHasHunger == true)
         {
             if (m_HungerValue != m_PetHungerScript.CurrentHunger)
             {
@@ -50,7 +50,7 @@ public class UIViewManager : MonoBehaviour
             }
         }
 
-        if (m_CurrentPetHasHappiness)
+        if (m_CurrentPetHasHappiness == true)
         {
             if (m_HappinessValue != m_PetHappinessScript.CurrentHappiness)
             {
@@ -72,7 +72,7 @@ public class UIViewManager : MonoBehaviour
         m_PetHungerScript = m_PetManager.CurrentPetHungerScript;
 
         //can also be written as m_currentPetHasHunger = m_Pet Hunger Script (See InitilizePetHappinessUI for example of this!) 
-        if (m_PetHungerScript)
+        if (m_PetHungerScript != null)
         {
             m_CurrentPetHasHunger = true;
         }
